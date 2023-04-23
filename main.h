@@ -56,7 +56,5 @@ int write_mod(buffer *buf, va_list v_ls);
 int write_int(buffer *buf, va_list v_ls);
 char *itoc(int num, char *dest);
 int _putchar(char c);
-int (*get_func(char x))(va_list args);
-
 
 #endif
