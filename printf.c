@@ -1,44 +1,68 @@
 #include "main.h"
 
 /**
- * _printf - prints any string with certain flags for modification
- * format: the string of characters to write to buffer
- * Return: an integer that counts how many writes to the buffer were made
+ * _printf - Entry point
+ * Desc: Entry
+ *@format: pointer
+ * Return: On success.
  */
 int _printf(const char *format, ...)
 {
-	int i = 0, var = 0;
-	va_list v_ls;
-	buffer *buf;
+	va_list mylist;
+	unsigned int i = 0, j = 0;
 
-	buf = buf_new();
-	if (buf == NULL)
+	if (!format || (format[0] == '%' && format[1] == '\0'))
 		return (-1);
-	if (format == NULL)
-		return (-1);
-	va_start(v_ls, format);
-	while (format[i])
+
+	va_start(mylist, format);
+	for (i = 0; format[i] != '\0'; i++)
 	{
-		buf_wr(buf);
 		if (format[i] == '%')
 		{
-			var = opid(buf, v_ls, format, i);
-			if (var < 0)
-			{
-				i = var;
-				break;
+			if (format[i + 1] == '%')
+			{	_putchar('%');
+				j++;
+				i++;
 			}
-			i += var;
-			continue;
+			else if (get_op_func(format, i + 1) != NULL)
+			{	j += (get_op_func(format, i + 1))(mylist);
+				i++;
+			}
+			else
+			{	_putchar(format[i]);
+				j++;
+			}
 		}
-		buf->str[buf->index] = format[i];
-		buf_inc(buf);
-		i++;
+		else
+		{	_putchar(format[i]);
+			j++;
+		}
 	}
-	buf_write(buf);
-	if (var >= 0)
-		i = buf->overflow;
-	buf_end(buf);
-	va_end(v_ls);
-	return (i);
+	va_end(mylist);
+	return (j);
+}
+/**
+ * get_op_func - Entry function
+ * @s: operator
+ * @pos: position
+ * Return: function
+ */
+int (*get_op_func(const char *s, int pos))(va_list)
+{
+	print_fun ops[] = {
+		{"c", print_single_char},
+		{"s", print_string_char},
+		{"d", print_decimal},
+		{"i", print_decimal},
+		{NULL, NULL}};
+	int k;
+
+	for (k = 0; ops[k].op != NULL; k++)
+	{
+		if (ops[k].op[0] == s[pos])
+		{
+			return (ops[k].f);
+		}
+	}
+	return (NULL);
 }
