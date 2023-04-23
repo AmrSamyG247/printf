@@ -1,70 +1,44 @@
 #include "main.h"
 
 /**
- * _printf - prints a formatted data
- * @format: the identifier
- *
- * Return: the length of the printed string
+ * _printf - prints any string with certain flags for modification
+ * format: the string of characters to write to buffer
+ * Return: an integer that counts how many writes to the buffer were made
  */
 int _printf(const char *format, ...)
 {
-	va_list argz;
-	int i = 0, count = 0;
-	int word_length = _strlen(format);
+	int i = 0, var = 0;
+	va_list v_ls;
+	buffer *buf;
 
-	va_start(argz, format);
-	while ((format[i]) && (i < word_length))
+	buf = buf_new();
+	if (buf == NULL)
+		return (-1);
+	if (format == NULL)
+		return (-1);
+	va_start(v_ls, format);
+	while (format[i])
 	{
+		buf_wr(buf);
 		if (format[i] == '%')
 		{
-			i++;
-			switch (format[i])
+			var = opid(buf, v_ls, format, i);
+			if (var < 0)
 			{
-				case 'b':
-					count = count + binary_converter(va_arg(argz, int));
-					break;
-				case 'c':
-					count = count + _putchar(va_arg(argz, int));
-					break;
-				case 's':
-					count = count + _puts(va_arg(argz, char*));
-					break;
-				case 'i':
-					count = count + print_number(va_arg(argz, int));
-					break;
-				case 'd':
-					count = count + print_number(va_arg(argz, int));
-					break;
-				case '%':
-					count = count + _putchar(format[i]);
-					break;
-				case 'p':
-					count = count + prints_pointers(va_arg(argz, long int));
-					break;
-				case 'x':
-					count = count + hexa_decimal_converter_small(va_arg(argz, unsigned int));
-					break;
-				case 'X':
-					count = count + hexa_decimal_converter_big(va_arg(argz, unsigned int));
-					break;
-				case 'o':
-					count = count + octal_converter(va_arg(argz, unsigned int));
-					break;
-				default:
-					count = count + _putchar(format[i - 1]);
-					count = count + _putchar(format[i]);
-					break;
+				i = var;
+				break;
 			}
-			i++;
+			i += var;
+			continue;
 		}
-		if (i < word_length)
-		{
-			count = count + _putchar(format[i]);
-			i++;
-		}
-		else
-			break;
+		buf->str[buf->index] = format[i];
+		buf_inc(buf);
+		i++;
 	}
-	va_end(argz);
-	return (count);
+	buf_write(buf);
+	if (var >= 0)
+		i = buf->overflow;
+	buf_end(buf);
+	va_end(v_ls);
+	return (i);
 }
