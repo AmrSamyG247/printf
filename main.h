@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <limits.h>
 
 /**
  * struct print_buffer - structer for the write buffer.
@@ -56,5 +57,18 @@ int write_str(buffer *buf, va_list v_ls);
 int write_mod(buffer *buf, va_list v_ls);
 int write_int(buffer *buf, va_list v_ls);
 char *itoc(int num, char *dest);
+
+/****************/
+int _putchar(char c);
+int binary_converter(int number);
+int print_number(int val);
+int _strlen(const char *str);
+int _puts(char *str);
+int prints_pointers(long int number);
+int hexa_decimal_converter_small(unsigned int number);
+int hexa_decimal_converter_big(unsigned int number);
+int octal_converter(unsigned int number);
+
+/****************/
 
 #endif
