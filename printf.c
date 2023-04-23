@@ -1,44 +1,49 @@
 #include "main.h"
-
+#include <stddef.h>
 /**
- * _printf - prints any string with certain flags for modification
- * format: the string of characters to write to buffer
- * Return: an integer that counts how many writes to the buffer were made
+ * _printf - recreates the printf function
+ * @format: string with format specifier
+ * Return: number of characters printed
  */
 int _printf(const char *format, ...)
 {
-	int i = 0, var = 0;
-	va_list v_ls;
-	buffer *buf;
-
-	buf = buf_new();
-	if (buf == NULL)
-		return (-1);
-	if (format == NULL)
-		return (-1);
-	va_start(v_ls, format);
-	while (format[i])
+	if (format != NULL)
 	{
-		buf_wr(buf);
-		if (format[i] == '%')
+		int count = 0, i;
+		int (*m)(va_list);
+		va_list args;
+
+		va_start(args, format);
+		i = 0;
+		if (format[0] == '%' && format[1] == '\0')
+			return (-1);
+		while (format != NULL && format[i] != '\0')
 		{
-			var = opid(buf, v_ls, format, i);
-			if (var < 0)
+			if (format[i] == '%')
 			{
-				i = var;
-				break;
+				if (format[i + 1] == '%')
+				{
+					count += _putchar(format[i]);
+					i += 2;
+				}
+				else
+				{
+					m = get_func(format[i + 1]);
+					if (m)
+						count += m(args);
+					else
+						count = _putchar(format[i]) + _putchar(format[i + 1]);
+					i += 2;
+				}
 			}
-			i += var;
-			continue;
+			else
+			{
+				count += _putchar(format[i]);
+				i++;
+			}
 		}
-		buf->str[buf->index] = format[i];
-		buf_inc(buf);
-		i++;
+		va_end(args);
+		return (count);
 	}
-	buf_write(buf);
-	if (var >= 0)
-		i = buf->overflow;
-	buf_end(buf);
-	va_end(v_ls);
-	return (i);
+	return (-1);
 }
