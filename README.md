@@ -1,6 +1,6 @@
-## 0x11. C - printf partener project ALX SE program made by Meriem Marroun & Amr Samy
+## 0x11. C - printf partner project ALX SE program made by Meriem Marroun & Amr Samy
 
-## - Alx Chort#13
+## - Alx Cohrot#13
 
 ## Task date from 2023-04-21  to  2023-04-26
 
