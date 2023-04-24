@@ -1,44 +1,86 @@
 #include "main.h"
 
 /**
- * _printf - prints any string with certain flags for modification
- * format: the string of characters to write to buffer
- * Return: an integer that counts how many writes to the buffer were made
+ * printIdentifiers - prints special characters
+ * @next: character after the %
+ * @arg: argument for the indentifier
+ * Return: the number of characters printed
+ * (excluding the null byte used to end output to strings)
  */
+int printIdentifiers(char next, va_list arg)
+{
+	int functsIndex;
+	identifierStruct functs[] = {
+		{"c", print_char},
+		{"s", print_str},
+		{"d", print_int},
+		{"i", print_int},
+		{"u", print_unsigned},
+		{"b", print_unsignedToBinary},
+		{"o", print_oct},
+		{"x", print_hex},
+		{"X", print_HEX},
+		{"S", print_STR},
+		{NULL, NULL}
+	};
+
+	for (functsIndex = 0; functs[functsIndex].indentifier != NULL; functsIndex++)
+	{
+		if (functs[functsIndex].indentifier[0] == next)
+			return (functs[functsIndex].printer(arg));
+	}
+	return (0);
+}
+/**
+ * _printf - man3 printf from stdio
+ * Description: produces output according to a format
+ * write output to stdout, the standard output stream
+ * @format: character string composed of zero or more directives
+ * Return: the number of characters printed
+ * (excluding the null byte used to end output to strings)
+ * return -1 for incomplete identifier error
+ */
+
 int _printf(const char *format, ...)
 {
-	int i = 0, var = 0;
-	va_list v_ls;
-	buffer *buf;
+	unsigned int i;
+	int identifierPrinted = 0, charPrinted = 0;
+	va_list arg;
 
-	buf = buf_new();
-	if (buf == NULL)
-		return (-1);
+	va_start(arg, format);
 	if (format == NULL)
 		return (-1);
-	va_start(v_ls, format);
-	while (format[i])
+
+	for (i = 0; format[i] != '\0'; i++)
 	{
-		buf_wr(buf);
-		if (format[i] == '%')
+		if (format[i] != '%')
 		{
-			var = opid(buf, v_ls, format, i);
-			if (var < 0)
-			{
-				i = var;
-				break;
-			}
-			i += var;
+			_putchar(format[i]);
+			charPrinted++;
 			continue;
 		}
-		buf->str[buf->index] = format[i];
-		buf_inc(buf);
-		i++;
+		if (format[i + 1] == '%')
+		{
+			_putchar('%');
+			charPrinted++;
+			i++;
+			continue;
+		}
+		if (format[i + 1] == '\0')
+			return (-1);
+
+		identifierPrinted = printIdentifiers(format[i + 1], arg);
+		if (identifierPrinted == -1 || identifierPrinted != 0)
+			i++;
+		if (identifierPrinted > 0)
+			charPrinted += identifierPrinted;
+
+		if (identifierPrinted == 0)
+		{
+			_putchar('%');
+			charPrinted++;
+		}
 	}
-	buf_write(buf);
-	if (var >= 0)
-		i = buf->overflow;
-	buf_end(buf);
-	va_end(v_ls);
-	return (i);
+	va_end(arg);
+	return (charPrinted);
 }

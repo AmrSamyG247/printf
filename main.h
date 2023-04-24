@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <limits.h>
+#include <stddef.h>
 
 /**
  * struct print_buffer - structer for the write buffer.
@@ -57,6 +58,32 @@ int write_str(buffer *buf, va_list v_ls);
 int write_mod(buffer *buf, va_list v_ls);
 int write_int(buffer *buf, va_list v_ls);
 char *itoc(int num, char *dest);
+
+
+/*****************/
+int _putchar(char c);
+int print_int(va_list arg);
+int print_unsigned(va_list arg);
+int _printf(const char *format, ...);
+int print_char(va_list arg);
+int print_str(va_list arg);
+int print_percent(void);
+void print_binary(unsigned int n, unsigned int *printed);
+int print_unsignedToBinary(va_list arg);
+int print_oct(va_list arg);
+int print_unsignedIntToHex(unsigned int num, char _case);
+int print_hex_base(va_list arg, char _case);
+int print_hex(va_list arg);
+int print_HEX(va_list arg);
+int print_STR(va_list arg);
+
+typedef struct identifierStruct
+{
+char *indentifier;
+int (*printer)(va_list);
+} identifierStruct;
+
+/*****************/
 
 
 #endif
